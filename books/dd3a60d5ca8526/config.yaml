@@ -1,0 +1,9 @@
+title: "AWS 覚書"
+summary: "自分がしたAWS関連の知識を整理する。"
+topics: ["markdown", "zenn", "aws", "cloud", "tech"]
+published: true
+price: 0 # 有料の場合200〜5000
+chapters:
+  - introduction
+  - initialsettings
+  - ec2
