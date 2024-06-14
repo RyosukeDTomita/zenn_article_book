@@ -1,6 +1,6 @@
 # Zenn Article and Zenn book
 
-[un license](https://img.shields.io/github/license/RyosukeDTomita/zenn_article_book)
+![un license](https://img.shields.io/github/license/RyosukeDTomita/zenn_article_book)
 
 ## INDEX
 
