@@ -73,6 +73,10 @@ npx zenn preview
 
 - books/配下に本を作るためのディレクトリに置く。
 
+```shell
+npx zenn new:book
+```
+
 ### 画像を使う
 
 > [画像の使い方](https://zenn.dev/zenn/articles/deploy-github-images)
