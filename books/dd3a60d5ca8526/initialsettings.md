@@ -1,5 +1,5 @@
 ---
-title: "AWS 初期設定"
+title: 初期設定"
 ---
 
 # AWS初期設定
@@ -141,7 +141,7 @@ sudo systemctl enable --now amazon-cloudwatch-agent
 ---
 
 ## Access Advisor
-
+- アクセス可能なサービスと過去のアクセス履歴が見られる。
 - IAMユーザ，IAMロール画面のタブにある。
 
 ---
@@ -150,7 +150,7 @@ sudo systemctl enable --now amazon-cloudwatch-agent
 
 - IAMのAccess reportsから作れる。
 - 信頼ゾーン外からのアクセスを見れる。
-- リージョンごとに作れる。
+- リージョンごとに作成可能
 
 ---
 
