@@ -26,6 +26,16 @@ docker stop $(docker ps -a -q)
 docker rmi $(docker images -q) -f
 ```
 
+## docker runに失敗するコンテナにshellアクセスする
+
+> [docker runに失敗するコンテナを起動する](https://qiita.com/sigma_devsecops/items/30089aa363c9ac6707be)
+
+現在のentrypointを上書きすることでコンテナを起動できる。
+
+```shell
+docker run -it --rm --entrypoint /bin/bash イメージ名 -c "sleep 99999999"
+```
+
 ---
 
 ## デバックのヒント
