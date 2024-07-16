@@ -23,7 +23,7 @@
 
 ---
 
-[FIXME](./LICENSE)
+[unlicense](./LICENSE)
 
 ---
 
