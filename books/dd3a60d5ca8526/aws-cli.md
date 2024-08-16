@@ -69,32 +69,31 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ## AWS-CLIでスイッチロールする
 
-1. GUIでスイッチロールした先でaws-cli用のアカウントを作成する。
-2. ~/.aws/configと~/.aws/credentialsに追記する
+~~1. GUIでスイッチロールした先でaws-cli用のアカウントを作成する。~~~
+
+1. GUIでスイッチロール元のアカウントのIAMユーザの鍵を生成する。
+2. MFAを生成する(必要ならば)
+3. ~/.aws/configと~/.aws/credentialsに追記する
 
 ```
 # ~/.aws/config
 [profile super-admin-config]
 region = ap-northeast-1
-role_arn = arn:aws:iam::スイッチロール前のアカウントid:role/AdministratorRole
-mfa_serial = arn:aws:iam::スイッチロール後のid:mfa/tomita(スイッチロール前のアカウントのiamユーザ名)
-source_profile = super-admin # ~/.aws/credentialsのプロファイル名を指定
+role_arn = arn:aws:iam::スイッチロール後のAWSアカウントID:role/<Role名>
+mfa_serial = arn:aws:iam::MFAを登録したAWSアカウントID:mfa/tomita(スイッチロール前のアカウントのiamユーザ名)
+source_profile = default # ~/.aws/credentialsのプロファイル名を指定
 ```
-
-```
-# ~/.aws/credentials
-[super-admin]
-aws_access_key_id = AKxxxxxxxxxxxxxxxxxx
-aws_secret_access_key = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
+> [!NOTE]
+> `source_profile`で指定しているのは~/.aws/credentialsの項目なのでなければ作る。
 
 スイッチロール側のアカウントになっていることを確認する。
 
 ```shell
-aws sts get-caller-identity --profile super-admin
+aws sts get-caller-identity --profile super-admin-config
 ```
 
 ---
+
 
 ## 主なコマンド
 
