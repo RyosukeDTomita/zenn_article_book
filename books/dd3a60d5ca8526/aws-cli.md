@@ -80,7 +80,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 [profile super-admin-config]
 region = ap-northeast-1
 role_arn = arn:aws:iam::スイッチロール後のAWSアカウントID:role/<Role名>
-mfa_serial = arn:aws:iam::MFAを登録したAWSアカウントID:mfa/tomita(スイッチロール前のアカウントのiamユーザ名)
+mfa_serial = arn:aws:iam::MFAを登録したAWSアカウントID:mfa/MFA登録時に決めた名前
 source_profile = default # ~/.aws/credentialsのプロファイル名を指定
 ```
 > [!NOTE]
