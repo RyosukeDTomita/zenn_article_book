@@ -132,20 +132,33 @@ RUN apt update && apt install -y \
   cvs
 ```
 
-- ヒアドキュメントを使う方法。&&とか使うとうまくいかないかも
+- ヒアドキュメントを使う方法。
 
-> [stage-1 4/4] RUN <<EOF (mkdir -p /var/log/nginx...):
-> 0.239 /bin/sh: -c: line 2: syntax error near unexpected token `&&'
-> 0.239 /bin/sh: -c: line 2:`  && chown -R nginx:nginx /var/log/nginx'
+:::message alert
+&&とヒアドキュメントは同時に使えない。
 
 ```
-RUN <<EOF
+[stage-1 4/4] RUN <<EOF (mkdir -p /var/log/nginx...):
+0.239 /bin/sh: -c: line 2: syntax error near unexpected token `&&'
+0.239 /bin/sh: -c: line 2:`  && chown -R nginx:nginx /var/log/nginx'
+```
+:::
+
+```
+RUN <<EOF bash -ex
 mkdir -p /var/log/nginx
 chown -R nginx:nginx /var/log/nginx
 touch /run/nginx.pid
 chown -R nginx:nginx /run/nginx.pid
 EOF
 ```
+
+:::message
+`bash -ex`をつけることでエラーが発生した際に途中でビルドを止めたり，実行するコマンドを表示してくれるようになる。
+詳しくは[ヒアドキュメントの使い方](https://zenn.dev/sigma_tom/articles/d7fe76cd063320)を参照
+:::
+
+
 
 ### escape
 
