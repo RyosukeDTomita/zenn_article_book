@@ -38,7 +38,7 @@ title: "Dockerのベストプラクティス"
 - Dockerはレイヤーを積み重ねることでイメージを作成する。
 - RUNやCOPYを実行するたびにread-onlyなレイヤーが積み重なっていきイメージサイズが大きくなる。 --> RUNをひとつにまとめることで作成されるレイヤーを少なくし，イメージを軽くできる。
 
-### multe-stage build
+### multi-stage build
 
 - ビルド用のコンテナで作成した実行ファイルを実行用コンテナにコピーして実行する。
 - ビルドに使用した中間イメージは最終的なイメージへ保存されないため，イメージサイズが小さくなる。
@@ -142,6 +142,7 @@ RUN apt update && apt install -y \
 0.239 /bin/sh: -c: line 2: syntax error near unexpected token `&&'
 0.239 /bin/sh: -c: line 2:`  && chown -R nginx:nginx /var/log/nginx'
 ```
+
 :::
 
 ```
@@ -157,8 +158,6 @@ EOF
 `bash -ex`をつけることでエラーが発生した際に途中でビルドを止めたり，実行するコマンドを表示してくれるようになる。
 詳しくは[ヒアドキュメントの使い方](https://zenn.dev/sigma_tom/articles/d7fe76cd063320)を参照
 :::
-
-
 
 ### escape
 
