@@ -37,6 +37,24 @@ drwxr-xr-x   2 root root 4096 Mar 29  2024 home
 ...
 ```
 
+### aptでversionを指定してインストールする
+
+使用するimageに対してaptがサポートしているライブラリのversionが一つだけの場合でもversionを書いておくのがベター。
+
+```shell
+# 使用可能なライブラリの一覧を調べる
+apt list openssl -a
+Listing... Done
+openssl/focal-updates,focal-security,now 1.1.1f-1ubuntu2.23 amd64 [installed]
+openssl/focal 1.1.1f-1ubuntu2 amd64
+
+openssl/focal-updates,focal-security 1.1.1f-1ubuntu2.23 i386
+openssl/focal 1.1.1f-1ubuntu2 i386
+
+# =でversionを指定する
+apt-get install -y --no-install-recommends openssl=1.1.1f-1ubuntu2.23
+```
+
 ### 自前でrootユーザを作成して使う
 
 作成したユーザにsudo権限を与えている。
