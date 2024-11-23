@@ -2,10 +2,10 @@
 title: "初期設定/AWS-CLIについて"
 ---
 
-# AWS Command Line Interface
 
 ## 概要とインストール
 
+- AWS Command Line Interface
 - AWS Management Consoleで提供される機能と同等の機能を実装することができる。
 - [install](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html#cliv2-linux-install)
 
@@ -20,7 +20,7 @@ aws --version
 
 ## 初期設定
 
-### IAMユーザの作成
+### IAMユーザの作成(OrganizationsでSSOする場合は不要)
 
 [参考](https://udemy.benesse.co.jp/development/system/aws-cli.html)
 
@@ -56,18 +56,57 @@ aws_secret_access_key = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 aws sts get-caller-identity
 ```
 
-### tab補完
+### OrganizationsでSSOする場合の初期設定
+
+- IAM Identity Centerの設定ページから`AWS access portal URL`を取得しておき，これを使う。
+
+```shell
+aws configure sso
+SSO start URL [None]: <AWS access portal URL>
+SSO Region [None]: ap-northeast-1
+```
+
+- 自動でprofileが作成されているのを確認する
+
+```
+# ~/.aws/config
+[profile AdministratorAccess-xxxxxxxxxxxx]
+sso_start_url = https://xxxxxxxxxxx.awsapps.com/start
+sso_region = ap-northeast-1
+sso_account_id = xxxxxxxxxxx
+sso_role_name = AdministratorAccess
+region = ap-northeast-1
+output = json
+```
+
+- 使えるかテスト
+
+```shell
+aws sts get-caller-identity --profile AdministratorAccess-xxxxxxxxxxxx
+```
+
+---
+
+## tab補完
 
 [コマンド補完](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-configure-completion.html)
 .bashrcに追加する。
 
-```sh
+```shell
+# bashの場合
+complete -C '/usr/local/bin/aws_completer' aws
+```
+
+```shell
+# zshの場合はcomplteを直接使用できない
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
 complete -C '/usr/local/bin/aws_completer' aws
 ```
 
 ---
 
-## AWS-CLIでスイッチロールする
+## AWS-CLIでスイッチロールする方法
 
 ~~1. GUIでスイッチロールした先でaws-cli用のアカウントを作成する。~~~
 
@@ -83,6 +122,7 @@ role_arn = arn:aws:iam::スイッチロール後のAWSアカウントID:role/<Ro
 mfa_serial = arn:aws:iam::MFAを登録したAWSアカウントID:mfa/MFA登録時に決めた名前
 source_profile = default # ~/.aws/credentialsのプロファイル名を指定
 ```
+
 > [!NOTE]
 > `source_profile`で指定しているのは~/.aws/credentialsの項目なのでなければ作る。
 
@@ -93,7 +133,6 @@ aws sts get-caller-identity --profile super-admin-config
 ```
 
 ---
-
 
 ## 主なコマンド
 
