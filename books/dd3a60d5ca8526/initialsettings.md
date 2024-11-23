@@ -2,18 +2,36 @@
 title: 初期設定"
 ---
 
-# AWS初期設定
-
-## IAMユーザの作成
+## IAMユーザのセットアップ
 
 - 日常的にrootアカウントを利用することは避け，IAMユーザを作ってログインするようにする。
 - マイページ --> アカウントからIAMユーザ/ロールによる請求情報へのアクセスを有効にする。
 - AWSマネジメントコンソールへのアクセスを選択し，パスワードのリセットを解除。
 - 一旦はAdministoratorAccessを付与しておく。
-- **ログイン用のURL**が表示されるので自分にメールをおくって保存しておく(IAM画面からユーザIDはわかるのでなんとかなる)。
-- [ログインURL](https://177179343845.signin.aws.amazon.com/console/)
+- **ログイン用のURL**が表示されるのでブックマークしておくと楽
+    > [ログインURL](https://xxxxxxxxxxx.signin.aws.amazon.com/console/)
 
-> [IAMユーザがAWSにサインインする](https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_users_sign-in.html)<https://My_AWS_Account_ID.signin.aws.amazon.com/console/>
+### Organizationsを作ってSSOサインインできるようにする
+
+いわゆるおひとりさまOrganizationsというやつ。参考になりそうな記事を貼っておく
+
+- [アクセスキーを使ったaws-cliはもうやめよう](https://qiita.com/s_moriyama/items/14b703cc0dfa91a6f464)
+- [「おひとり様」AWS Organizationsを運用する](https://qiita.com/kyooooonaka/items/af3b36d5e946b3152021)
+
+1. Organizationsを有効にする
+2. IAM Identity Centerのセットアップ
+    - コンソールから有効にする
+    - ユーザの作成
+    - groupの作成
+    - 許可セットの作成
+    - 許可セットをAWSのアカウントに紐付ける(許可セットの画面から行える)
+        - この際に作成したgroupに紐づけする
+    - MFAを有効化する
+    - IAM Identity Centerの設定ページから`AWS access portal URL`をメモしておく。
+
+### AWS CLIの設定
+
+[AWS CLIの設定方法](./aws-cli.md)
 
 ---
 
@@ -141,6 +159,7 @@ sudo systemctl enable --now amazon-cloudwatch-agent
 ---
 
 ## Access Advisor
+
 - アクセス可能なサービスと過去のアクセス履歴が見られる。
 - IAMユーザ，IAMロール画面のタブにある。
 
