@@ -18,7 +18,18 @@ title: 初期設定"
 - [アクセスキーを使ったaws-cliはもうやめよう](https://qiita.com/s_moriyama/items/14b703cc0dfa91a6f464)
 - [「おひとり様」AWS Organizationsを運用する](https://qiita.com/kyooooonaka/items/af3b36d5e946b3152021)
 
-#### AWS CLIの設定
+1. Organizationsを有効にする
+2. IAM Identity Centerのセットアップ
+    - コンソールから有効にする
+    - ユーザの作成
+    - groupの作成
+    - 許可セットの作成
+    - 許可セットをAWSのアカウントに紐付ける(許可セットの画面から行える)
+        - この際に作成したgroupに紐づけする
+    - MFAを有効化する
+    - IAM Identity Centerの設定ページから`AWS access portal URL`をメモしておく。
+
+### AWS CLIの設定
 
 [AWS CLIの設定方法](./aws-cli.md)
 
