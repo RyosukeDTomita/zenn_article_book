@@ -29,6 +29,11 @@ title: 初期設定"
     - MFAを有効化する
     - IAM Identity Centerの設定ページから`AWS access portal URL`をメモしておく。
 
+:::message
+IAM Identity Centerで作成したユーザは通常のawsのコンソールからはログインできず，AWS access portal URL(IAM Identity CenterのDash Boardから確認できる)からログインする
+:::
+
+
 ### AWS CLIの設定
 
 [AWS CLIの設定方法](./aws-cli.md)
