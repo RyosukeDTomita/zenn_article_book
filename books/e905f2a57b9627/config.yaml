@@ -1,5 +1,5 @@
 title: "Effective Docker"
-summary: "Dockerのインストールから始まり，docker compose，コンテナセキュリティ，イメージ縮小方法，Dockerfile，devcontainer等のツールについて詳しく解説。"
+summary: "Dockerの初期設定，docker compose，imageを小さくするベストプラクティス，リモート，ローカルキャッシュを使う，Dev Containerなどについて詳しく解説"
 topics: ["docker", "dockercompose", "devcontainer"]
 published: true
 price: 0 # 有料の場合200〜5000
