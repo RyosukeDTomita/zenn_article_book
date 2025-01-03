@@ -14,7 +14,7 @@ docker composeがV2らしい。[docker-composは非推奨](https://www.konosumi.
 
 ---
 
-## yamlのyamlのyamlのyamlのyamlのyamlのyamlのyamlのファイル名
+## yamlのファイル名
 
 `compose.yaml`以外のファイル名を使うこともできるが，公式の推奨は`compose.yaml`である。
 > The default path for a Compose file is compose.yaml (preferred) or compose.yml that is placed in the working directory. Compose also supports docker-compose.yaml and docker-compose.yml for backwards compatibility of earlier versions. If both files exist, Compose prefers the canonical compose.yaml.
@@ -31,7 +31,7 @@ docker composeがV2らしい。[docker-composは非推奨](https://www.konosumi.
 docker compose up # docker-compose.ymlに書かれているすべてのサービスをビルドして起動する。
 ```
 
-:::warning
+:::message alert
 `docker compose up`はイメージが存在する場合には再度のビルドは行わない。
 `docker compose up --build`の様に実行するとイメージのビルドをしつつ，コンテナを起動してくれる。
 :::

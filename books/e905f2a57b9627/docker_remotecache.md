@@ -14,11 +14,13 @@ DockerのBuildkitにはリモートのキャッシュを使う機能がある。
 > In most case you want to use the inline cache exporter. However, note that the inline cache exporter only supports min cache mode. To enable max cache mode, push the image and the cache separately by using registry cache exporter.
 > inline and registry exporters both store the cache in the registry. For importing the cache, type=registry is sufficient for both, as specifying the cache format is not necessary.
 
-今回はinlineキャッシュを使う例を紹介する。
+今回はregistryキャッシュを使う例を紹介する。
+:::massage
+registryにしたのはtype=maxをサポートしているため中間imageのキャッシュも使用できるから
+:::
 
 ```shell
-# buildxでリモートキャッシュを使ってbuildし，imageとキャッシュをpushする
-docker buildx build --push -t ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs --cache-to type=inline --cache-from type=inline .
+docker buildx build --cache-from=type=registry,ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs,mode=max --cache-to=type=registry,ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs,mode=max -t react-app .
 ```
 
 ![GitHub Container Registry](/images/dockerbook/packages.png)
@@ -26,8 +28,8 @@ docker buildx build --push -t ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs --ca
 ```shell
 # リモートキャッシュを使ってbuildだけを行う
 docker buildx build \
-  --cache-from=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs \
-  --cache-to=type=inline \
+  --cache-from=type=registry,ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs,mode=max \
+  --cache-to=type=registry,mode=max,ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs \
   -t myapp .
 ```
 
@@ -40,11 +42,9 @@ services:
       context: ./
       dockerfile: Dockerfile
       cache_from:
-        - ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs
-        - type=inline
+        - ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs,type=registry,mode=max
       cache_to:
-        - ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs
-        - type=inline
+        - ref=ghcr.io/ryosukedtomita/devsecops-demo-aws-ecs,type=registry,mode=max
     image: react-app:latest
     container_name: react-app-container
     ports:
