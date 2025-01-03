@@ -1,35 +1,42 @@
 ---
-title: "docker composeについて"
+title: "docker compose"
 ---
 
-# docker composeについて
+## docker composeを使用するメリット
+
+- Dockerfileは単独のDockerイメージを作るための設定ファイル
+- docker-composeは複数のDockerイメージを組み合わせてアプリケーションを実行することができる。設定ファイルは`compose.yaml`が使われる。
+  - `compose.yaml`はvolumeの設定や開くポートなど通常`docker run`で指定するオプションをyamlファイルに事前に記述しておくことができるため，長いコマンドを覚えなくて済むので単一イメージの場合でも使うと良い。
 
 ## docker-composeとdocker compose
 
-- docker composeがV2らしい。[docker-composは非推奨](https://www.konosumi.net/entry/2023/02/26/142508)
-- 推奨ファイル名がdocker-compose.ymlからcompose.yamlに変更になったらしい。
+docker composeがV2らしい。[docker-composは非推奨](https://www.konosumi.net/entry/2023/02/26/142508)
 
 ---
 
-## ファイル名
+## yamlのyamlのyamlのyamlのyamlのyamlのyamlのyamlのファイル名
 
-[公式ドキュメント](https://docs.docker.jp/compose/compose-file/index.html)によるとcompose.yamlが推奨。
+`compose.yaml`以外のファイル名を使うこともできるが，公式の推奨は`compose.yaml`である。
+> The default path for a Compose file is compose.yaml (preferred) or compose.yml that is placed in the working directory. Compose also supports docker-compose.yaml and docker-compose.yml for backwards compatibility of earlier versions. If both files exist, Compose prefers the canonical compose.yaml.
+>
+> 引用元: [dockerdocs](https://docs.docker.com/compose/intro/compose-application-model/#the-compose-file)
 
-## docker composeの主要なコマンド
->
-> [docker composeの一覧](https://qiita.com/nikadon/items/995c5705ff1171f7484d)
->
+---
+
+## docker composeの最低限のコマンド
+
 ### up
 
 ```shell
 docker compose up # docker-compose.ymlに書かれているすべてのサービスをビルドして起動する。
 ```
 
-> [!NOTE]
-> `docker compose up`はイメージが存在する場合には再度のビルドは行わない。そのため，キャッシュを利用しつつ，イメージをビルドしたい際にはbuildが必用。
-> `docker compose up --build`の様に実行するとイメージのビルドをしつつ，コンテナを起動してくれる。
+:::warning
+`docker compose up`はイメージが存在する場合には再度のビルドは行わない。
+`docker compose up --build`の様に実行するとイメージのビルドをしつつ，コンテナを起動してくれる。
+:::
 
-### build
+### build,buildx
 
 - BuildKitを使いたい場合にはbuildx bakeを使う。
 
@@ -37,77 +44,4 @@ docker compose up # docker-compose.ymlに書かれているすべてのサービ
 docker buildx bake
 ```
 
-### run
-
-- 事前定義していないコマンドを実行するのに使う。
-
-> [docker-compose.ymlにentrypointを記載](https://docs.docker.jp/v1.12/compose/compose-file.html#entrypoint)しているならrunで起動できそう?
-
-- docker-compose.ymlのservice名を使ってコマンドを実行する。
-
-- ENTRYPOINTに/bin/bash -cが指定されているので以下のようにコマンドが実行できる。
-
-```
-ENTRYPOINT ["/bin/bash", "-c"]
-```
-
-```shell
-docker compose run pytest-env "pytest"
-```
-
-> [!NOTE]
-> docker compose run時にはcompose.ymlとかDockerfileに記載したEXPOSEの設定は反映されない。
-
-### start
-
-- docker-compose.ymlやDockerfileのCMDやentrypointに記載のあるコマンドを使ってコンテナを起動したい時に使う。
-
-### exec
-
-- 起動しているコンテナに対してコマンドを実行するのに使う。
-- docker-compose.ymlのservice名を使ってコマンドを実行する。
-
-- ENTRYPOINTに/bin/bash -cがついていても起動しているコンテナに対するコマンドなので/bin/bash -cをつけてコマンドを実行する。
-
-```shell
-docker compose exec pytest-env /bin/bash -c "pytest"
-```
-
 ---
-
-## docker-compose.yml例
-
-```yaml
-version: '3'
-
-services:
-  app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    image: flask-app # image名
-    container_name: flask-container # docker execで指定するコンテナ名
-    volumes:
-        - ./:/usr/local/app
-    ports:
-      - 80:8000 # localport:dockerport # これかくとDockerfileのEXPOSE不要
-    command: /usr/local/bin/gunicorn run:app -b 0.0.0.0:8000 --chdir /usr/local/app
-```
-
----
-
-## docker-compose.ymlとdocker network
-
-- 同じdocker-compose.ymlに記載すると同じネットワークに所属する。
-- docker-compose.ymlのサービス名(上の例の場合はapp)でアクセスできる。
-- この名前解決には`127.0.0.11`が使われる。[ソース](https://dev.classmethod.jp/articles/docker-service-discovery/)
-
-> [!NOTE]
-> ローカル端末の127.0.0.1:80から127.0.0.1:8000にアクセスしようとした際にコンテナ内でlocalhost:8000を指定してもうまくいかないのでサービス名を使用する。
-
----
-
-## memo
-
-- docker-compose.ymlでportsを指定したらDockerfileのEXPOSEはいらないぽい。
-- DockerfileにCMD書くよりもdocker-compose.ymlにcommandを書くほうが楽そう。

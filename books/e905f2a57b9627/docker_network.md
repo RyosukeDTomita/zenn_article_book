@@ -3,16 +3,11 @@ title: "Docker Networkの使い方"
 ---
 
 
-# Docker Network
-
 ## ネットワークを作る
 
 ```shell
 docker network create work-network
 ```
-
-> [!NOTE]
-> networkはイメージやコンテナ削除すると一緒に消える?
 
 ---
 
@@ -50,10 +45,31 @@ PORT     STATE SERVICE VERSION
 MAC Address: 02:42:AC:15:00:02 (Unknown)
 ```
 
-- docker-composeの場合でも同様で，compose.yamlに記載のあるサービス名を使って名前解決できる。
+:::message
+docker-composeの場合は明示的にnetworkを指定しなくても同じyamlファイル内のサービスは同じネットワークに所属する。
+名前解決したい際にはcompose.yamlのサービス名を指定する。
 
-> [compose.yamlの例](https://github.com/RyosukeDTomita/lua-reverse-proxy-with-flask/blob/1729ae9aaf49528001dd3572a56c3d7d37d08625/compose.yaml#L4)
-> [nginx.confで127.0.0.11を指定している](https://github.com/RyosukeDTomita/lua-reverse-proxy-with-flask/blob/1729ae9aaf49528001dd3572a56c3d7d37d08625/reverse_proxy/conf/nginx.conf#L40)
-> [luaスクリプト中で指定するipの部分にcompose.yamlのサービス名を指定している](https://github.com/RyosukeDTomita/lua-reverse-proxy-with-flask/blob/1729ae9aaf49528001dd3572a56c3d7d37d08625/reverse_proxy/src/main.lua#L30)
+```
+services:
+  reverse_proxy_app:
+    build:
+      context: ./reverse_proxy
+      dockerfile: Dockerfile
+    image: lua-reverse-proxy:latest
+    container_name: reverse_proxy_container
+    ports:
+      - 80:80 # localport:dockerport
+  redis_app:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: redis-img:latest
+    container_name: redis_container
+    ports:
+      - 6379:6379 # localport:dockerport
+```
+
+この構成の場合reverse_proxy_app内から`rediscli -h redis_app`のようにして名前解決して接続できる。
+:::
 
 ---
