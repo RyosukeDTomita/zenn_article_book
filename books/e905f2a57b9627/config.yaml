@@ -1,19 +1,19 @@
 title: "Effective Docker"
 summary: "Dockerのインストールから始まり，docker compose，コンテナセキュリティ，イメージ縮小方法，Dockerfile，devcontainer等のツールについて詳しく解説。"
-topics: ["docker", "docker-compose", "devcontainer"]
+topics: ["docker", "dockercompose", "devcontainer"]
 published: true
 price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
 chapters:
-  - docker_term.md
-  - docker_setup.md
-  - docker_desktop.md
-  - devcontainer.md
-  - docker_command.md
-  - docker.md
-  - docker-security.md
-  - docker-compose.md
-  - docker_hub.md
-  - docker_network.md
-  - docker_tips.md
+  - hello
+  - docker_term
+  - docker_setup
+  - docker-compose
+  - docker_image
+  - docker_layer
+  - docker_build_cache
+  - docker_remotecache
+  - docker-security
+  - docker_network
+  - docker_tips
 

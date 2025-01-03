@@ -1,15 +1,14 @@
 ---
-title: "環境構築/main"
+title: "環境構築"
 ---
-
-# Docker 環境構築
 
 ## 動作確認済み環境
 
 - Ubuntu 20.04
 - WSL2 Ubuntu(22.04)
+多分他の環境でも動くと思うが，確認していないので注意。
 
-## install
+## install and setup
 
 - [公式ドキュメントをみてインストールする](https://matsuand.github.io/docs.docker.jp.onthefly/engine/install/ubuntu/)
 - sudo 以外で docker コマンドを実行できるようにする。
@@ -49,15 +48,22 @@ sudo rm -rf ~/.docker
 
 > [参考](https://qiita.com/dkoide/items/ca1f4549dc426eaf3735)
 
-- 環境変数
+### 設定箇所
+
+- 環境変数に設定
+
+```shell
+export http_proxy=http://sigma:password@localhost:81
+```
+
 - ~/.docker/config.json
 
 ```json
 {
   "proxies": {
     "default": {
-      "httpProxy": "http://tomita:password@localhost:81",
-      "httpsProxy": "http://tomita:password@localhost:81"
+      "httpProxy": "http://sigma:password@localhost:81",
+      "httpsProxy": "http://sigma:password@localhost:81"
     }
   }
 }
@@ -70,8 +76,11 @@ sudo rm -rf ~/.docker
 Environment = 'http_proxy=http://tomita:password@localhost:81' 'https_proxy=http://tomita:password@localhost:81
 ```
 
-> [!NOTE]
-> `sudo systemctl edit docker`するとうまく行かなかったので`mkdir /etc/systemd/system/docker.service.d`した後に vim で設定した。
+:::message
+`sudo systemctl edit docker`を使ってoverride.confの設定をすることも可能そうだが，自分はうまくいかなかったので`mkdir /etc/systemd/system/docker.service.d`した後に手動でoverride.confを作成して記述した。
+:::
+
+### 設定反映
 
 - dockerサービスを再起動
 
@@ -91,10 +100,12 @@ sudo docker info # 設定できているかチェック proxy設定がでてく�
 
 ## Docker Desktop
 
-[./docker_desktop.md](./docker_desktop.md)を参照。
+- [Ubuntu に Docker Desktop をインストール](https://docs.docker.jp/desktop/install/ubuntu.html)を見ながら deb パッケージをインストールするだけ。
+- gpg の設定をやっておくとよい。
+
+```shell
+gpg --generate-key
+pass init <my pass key>
+```
 
 ---
-
-## VSCodeをDockerコンテナ内で開く
-
-[./devcontaienr.md](./devcontainer.md)を参照。

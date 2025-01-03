@@ -1,70 +1,54 @@
 ---
-title: "Docker security"
+title: "ベスプラ⑤/security対策"
 ---
 
 ## コンテナセキュリティの基本方針
 
 - コンテナブレイクアウトやコンテナエスケープを防ぐために`root`でコンテナを起動しないことが大切。
 - COPY命令で持ち込んだファイルにはクレデンシャルを含めない。途中で削除してもイメージに残ってしまう。
+  - .dockerignoreで除外するなど
 - distroless(Google提供のシェルすら含まれていない軽いイメージ)を使うことを視野に入れる。
 
 > distrolessでもdebugと書いてあるやつはshellがあるので便利。
 
 - ビルドし直す時には脆弱性のあるキャッシュが使われないように--no-cacheを使う。
-- 信頼できるイメージ(Docker Officlial Image，Verified Publisher(Dockerによって検証)，Sponsord OSS)
 
-## 一般ユーザでコンテナを起動する
+## 信頼できるイメージをベースに使う
+
+公式が出しているイメージをベースにする。
+
+- Docker Officlial Image，Verified Publisher(Dockerによって検証)
+- Sponsord OSSなど
+
+---
+
+## rootユーザ以外でコンテナを起動する
+
+最終的サービスを実行するユーザが非rootユーザであれば途中はrootユーザを使っても問題ない。
 
 ### イメージに存在する非rootユーザを使う
 
+イメージによってはデフォルトで非rootユーザが存在しているのでこれを使う。
+
 ```shell
-FROM debian:bookworm-20240812 AS devcontainer
+FROM node:20
+WORKDIR /app
+USER root
+RUN apt update && apt install -y nginx --no-install-recommends
 
 # defaultの非rootユーザを使用する
 USER nobody
-ENTRYPOINT ["ls"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
 ```
+
+### 自前で非rootユーザを作成する
+
+以下はsudo権限が必要だったのでsudo使用可能なユーザを作成する例
 
 ```shell
-docker build -t test .
-docker run test -l
-total 60
-lrwxrwxrwx   1 root root    7 Aug 12 00:00 bin -> usr/bin
-drwxr-xr-x   2 root root 4096 Mar 29  2024 boot
-drwxr-xr-x   5 root root  340 Sep 28 15:46 dev
-drwxr-xr-x   1 root root 4096 Sep 28 15:46 etc
-drwxr-xr-x   2 root root 4096 Mar 29  2024 home
-...
-```
-
-### aptでversionを指定してインストールする
-
-使用するimageに対してaptがサポートしているライブラリのversionが一つだけの場合でもversionを書いておくのがベター。
-
-```shell
-# 使用可能なライブラリの一覧を調べる
-apt list openssl -a
-Listing... Done
-openssl/focal-updates,focal-security,now 1.1.1f-1ubuntu2.23 amd64 [installed]
-openssl/focal 1.1.1f-1ubuntu2 amd64
-
-openssl/focal-updates,focal-security 1.1.1f-1ubuntu2.23 i386
-openssl/focal 1.1.1f-1ubuntu2 i386
-
-# =でversionを指定する
-apt-get install -y --no-install-recommends openssl=1.1.1f-1ubuntu2.23
-```
-
-### 自前でrootユーザを作成して使う
-
-作成したユーザにsudo権限を与えている。
-過去に作成した[my_portscannerのDockerfile](https://github.com/RyosukeDTomita/my_portscanner/blob/main/Dockerfile)から抜粋。
-
-```
 FROM python:3.12.4-slim-bullseye AS run
 WORKDIR /app
 
-ARG VERSION="0.2.0"
 
 # install sudo
 RUN <<EOF bash -ex
@@ -79,14 +63,14 @@ RUN <<EOF bash -ex
 echo 'Creating ${USER_NAME} group.'
 addgroup ${USER_NAME}
 echo 'Creating ${USER_NAME} user.'
-adduser --ingroup ${USER_NAME} --gecos "my_portscanner user" --shell /bin/bash --no-create-home --disabled-password ${USER_NAME} # ホームディレクトリを作らず，デフォルトshellをbashに設定し，passwordを設定しない
+adduser --ingroup ${USER_NAME} --gecos "my_portscanner user" --shell /bin/bash --no-create-home --disabled-password ${USER_NAME}
 echo 'using sudo'
 usermod -aG sudo ${USER_NAME}
-echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers # passwordなしでsudoを実行できるようにする
+echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 rm -rf /var/lib/lists
 EOF
 
-COPY --from=devcontainer --chown=${USER_NAME}:${USER_NAME} ["/app/dist/my_portscanner-${VERSION}-py3-none-any.whl", "/app/dist/my_portscanner-${VERSION}-py3-none-any.whl"] # 作成したユーザに所有権を移譲してcopy
+COPY --from=devcontainer --chown=${USER_NAME}:${USER_NAME} ["/app/dist/my_portscanner-${VERSION}-py3-none-any.whl", "/app/dist/my_portscanner-${VERSION}-py3-none-any.whl"]
 
 # install app
 RUN python3 -m pip install /app/dist/my_portscanner-${VERSION}-py3-none-any.whl
@@ -95,43 +79,29 @@ USER ${USER_NAME}
 ENTRYPOINT ["sudo", "my_portscanner"]
 ```
 
----
+### imageの中でクレデンシャルを扱う
 
-## docker scout
+#### NG例1: ENVを使ってクレデンシャルを渡してしまう
 
-- 指定したイメージやアーカイブをスキャンして脆弱性の有無を調べられるツール。
-
-```shell
-docker scout quickview react-app:latest
-docker scout cves react-app:latest
-```
-
----
-
-## イメージからクレデンシャルを抜き出すハンズオン
-
-- イメージから環境変数を取得
+- DockerfileのENVにクレデンシャルを指定した場合，`docker history`で参照可能
 
 ```shell
 docker build -t myimage:latest -f- . <<EOF
 FROM busybox
 ENV AWS_ACCESS_KEY_ID=hogehoge
-COPY secrets.txt /etc/secrets.txt
-RUN rm /etc/secrets.txt
 EOF
 
 docker history myimage:latest | grep AWS_ACCESS_KEY_ID
 <missing>      35 seconds ago   ENV AWS_ACCESS_KEY_ID=hogehoge                  0B        buildkit.dockerfile.v0
 ```
 
-- イメージから途中で消したファイルを取得
+#### NG例2: imageにCOPYでクレデンシャルファイルを渡してしまう
 
 ```shell
 echo "secret" > secrets.txt
 
 docker build -t myimage:latest -f- . <<EOF
 FROM busybox
-ENV AWS_ACCESS_KEY_ID=hogehoge
 COPY secrets.txt /etc/secrets.txt
 RUN rm /etc/secrets.txt
 EOF
@@ -155,3 +125,39 @@ secrets
 for layer in $(tar -tf myimage.tar | fgrep layer.tar); do tar xfO myimage.tar $layer;done | tar xfO - etc/secrets.txt
 secrets
 ```
+
+#### 対策例
+
+- クレデンシャルが誤って混入しないように.dockerignoreを使う
+- multi-stage buildを使って中間imageでのみクレデンシャルを扱う --> 最終imageにはクレデンシャルが残らない
+- buildxの`--secret`を使ってマウントする
+
+```shell
+docker buildx build -t myimage:latest --secret id=aws_access_key,src=./.env -f- . <<EOF
+FROM busybox
+RUN --mount=type=secret,id=aws_access_key cat /run/secrets/aws_access_key
+EOF
+```
+
+---
+
+## Dockerのセキュリティツール
+
+### docker scout
+
+- 指定したイメージやアーカイブをスキャンして脆弱性の有無を調べられるツール。
+
+```shell
+docker scout quickview react-app:latest
+docker scout cves react-app:latest
+```
+
+### trivy
+
+- コンテナスキャンやクレデンシャルスキャンが可能
+
+```shell
+trivy image --exit-code 1 --vuln-type os --ignorefile .trivyignore --no-progress --format table -o container-scanning-report.txt --severity CRITICAL,HIGH <image名>:<tag>
+```
+
+---
