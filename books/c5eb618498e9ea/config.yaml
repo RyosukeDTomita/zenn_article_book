@@ -1,0 +1,12 @@
+title: "より良いプログラマーになるための覚書"
+summary: ""
+topics: ["設計","リファクタリング","良いコード"]
+published: true
+price: 0 # 有料の場合200〜5000
+# 本に含めるチャプターを順番に並べましょう
+chapters:
+  - coding
+  - reading
+  - refactoring
+  - training
+  - cool
