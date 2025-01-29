@@ -16,4 +16,5 @@ chapters:
   - docker-security
   - docker_network
   - docker_tips
+  - docker_error
 

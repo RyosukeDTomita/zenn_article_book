@@ -26,6 +26,12 @@ docker stop $(docker ps -a -q)
 docker rmi $(docker images -q) -f
 ```
 
+- docker composeで作ったリソースをまとめて削除
+
+```shell
+docker compose down --rmi all --volumes --remove-orphans
+```
+
 ## inspect
 
 - 詳細が見れる。
