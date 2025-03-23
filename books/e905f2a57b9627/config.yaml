@@ -15,6 +15,6 @@ chapters:
   - docker_remotecache
   - docker-security
   - docker_network
+  - docker_volume
   - docker_tips
-  - docker_error
 
