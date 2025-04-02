@@ -85,6 +85,10 @@ function get_user_info(user_id, user_name)
   - ガード節が7つ等は逆に読みにくい
   - ヘルパーメソッドとして抽出することを検討する
 
+[^5]
+
+- 良い関数名が思いつかない時には，良い設計でないかもしれない。
+
 ---
 
 ## テスト
@@ -99,3 +103,4 @@ function get_user_info(user_id, user_name)
 - [^2]: [リーダブルコード](https://www.oreilly.co.jp/books/9784873115658/)
 - [^3]: [プリンシプル オブ プログラミング](https://www.shuwasystem.co.jp/book/9784798046143.html)
 - [^4]: [Tidy First?](https://www.oreilly.co.jp/books/9784814400911/)
+- [^5]: [テスト駆動開発 Kent Bech](https://shop.ohmsha.co.jp/shopdetail/000000004967/)
