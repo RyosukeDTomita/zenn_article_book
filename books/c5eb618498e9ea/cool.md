@@ -1,5 +1,5 @@
 ---
-title: "さっと言えたら，カッコいい原則"
+title: "さっと言えたら，カッコいい原則とか名言"
 ---
 
 [^1]
@@ -19,6 +19,11 @@ title: "さっと言えたら，カッコいい原則"
 - Second system syndrome: 2番目のリリースは，機能過多になりやすいので注意する
 - Yak Shaving: 問題を解決するために問題を解決する必要がでてくると厄介なので，目的からずれたことをしていないか自問自答する
 
+[^2]
+
+- ソフトウェアエンジニアリングとは時間で積分したプログラミングである。(Software engineering is programming integrated over time.)
+
 ## References
 
 - [^1]: [プログラマー脳](https://www.shuwasystem.co.jp/book/9784798068534.html)
+- [^2]: [Googleのソフトウェアエンジニアリング](https://www.oreilly.co.jp/books/9784873119656/)
