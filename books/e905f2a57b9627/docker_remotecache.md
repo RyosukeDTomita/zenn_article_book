@@ -15,7 +15,7 @@ DockerのBuildkitにはリモートのキャッシュを使う機能がある。
 > inline and registry exporters both store the cache in the registry. For importing the cache, type=registry is sufficient for both, as specifying the cache format is not necessary.
 
 今回はregistryキャッシュを使う例を紹介する。
-:::massage
+:::message
 registryにしたのはtype=maxをサポートしているため中間imageのキャッシュも使用できるから
 :::
 
