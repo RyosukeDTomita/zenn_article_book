@@ -55,7 +55,6 @@ npx zenn init
 - articles/配下に記事を置く。
 
 ```shell
-cd ~/aws_my_knowledge/
 npx zenn new:article
 ```
 
