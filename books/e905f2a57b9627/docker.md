@@ -18,8 +18,9 @@ title: "Dockerのベストプラクティス"
 - bullseye: Debianの安定版リリースに基づく。
 - alpine: Alpine Linux
 
-> [!NOTE]
-> おすすめはdebian-slim説。alpineは使い勝手が良くない。
+:::message
+おすすめはdebian-slim説。alpineは使い勝手が良くない。
+:::
 
 ### イメージの探せるサイト
 
@@ -121,8 +122,9 @@ SHELL ["/bin/bash", "-c"]
 - インストールするアプリ等はlatest等を使わずにバージョンを指定してやる。
 - イメージ自体のバージョンもDockerfileのハッシュとかにしてもいいかも。ECRにpushするときにはcommit hashとかにしてた。
 
-> [!NOTE]
-> バージョンを書いておくことでキャッシュの有効活用にもつながる。aptでバージョンなしでインストールしていると最新ライブラリが出るたびにそれ以前のレイヤーのキャッシュが使えなくなる。
+:::message
+バージョンを書いておくことでキャッシュの有効活用にもつながる。aptでバージョンなしでインストールしていると最新ライブラリが出るたびにそれ以前のレイヤーのキャッシュが使えなくなる。
+:::
 
 ### 見やすい書き方を工夫する
 
@@ -262,13 +264,15 @@ services:
 docker run -it --mount type=bind,source=./,target=/usr/local/app flask-app "/bin/bash"
 ```
 
-> [!WARNING]
-> volumeの共有はコンテナに対して行われるため，`docker compose up`でビルドしてコンテナを起動している状態で`docker run -it イメージ名 "/bin/bash"`を実行しても共有フォルダは見られない(別のサービスを立ち上げてbashを起動している扱いになるみたい。)
-> docker exec -it コンテナ名 "/bin/bash"なら見れる。
+:::message alert
+volumeの共有はコンテナに対して行われるため，`docker compose up`でビルドしてコンテナを起動している状態で`docker run -it イメージ名 "/bin/bash"`を実行しても共有フォルダは見られない(別のサービスを立ち上げてbashを起動している扱いになるみたい。)
+docker exec -it コンテナ名 "/bin/bash"なら見れる。
+:::
 
-> [!NOTE]
-> volumesの共有とDockerfileのCOPYは併用可能である。
-> DockerfileのCOPYで配置したソースをvolumeの共有を使ってローカルから編集した場合にはきちんとソースが変更されていた。
+:::message
+volumesの共有とDockerfileのCOPYは併用可能である。
+DockerfileのCOPYで配置したソースをvolumeの共有を使ってローカルから編集した場合にはきちんとソースが変更されていた。
+:::
 
 #### volumeを作成して使う
 
